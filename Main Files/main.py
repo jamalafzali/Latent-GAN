@@ -25,8 +25,9 @@ from torchvision import transforms, utils
 from AutoEncoder import AutoEncoder
 from Discriminator import Discriminator
 from Generator import Generator
-
 from Variables import *
+from Dataset import *
+from getData import get_tracer
 
 #if __name__ == '__main__':
 
@@ -37,101 +38,23 @@ print("Random Seed: ", manualSeed)
 random.seed(manualSeed)
 torch.manual_seed(manualSeed)
 
-
-
-########################
-# Creating the dataset #
-########################
-# https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
-
-from getData import get_tracer
-
-class TracerDataset(Dataset):
-    """Tracer Dataset"""
-
-    def __init__(self, file_number='', root_dir='', transform=None):
-        """
-        Initialise the Dataset
-        :fileNumber: int or string
-            Used to specify which file to open
-        : rootDir: string
-            Directory of all vtu files
-        :transform: callable, optional
-            Optional transform to be applied on a sample
-        """
-        #self.tracer_set = get_tracer(file_number)
-        self.root_dir = root_dir
-        self.transform = transform
-        self.length = time_steps # number of timesteps available
-
-    def __len__(self):
-        return self.length
-    
-    def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-        
-        sample = get_tracer(idx)
-
-        if self.transform:
-            sample = self.transform(sample)
-
-        return sample
-
-class ToTensor(object):
-    """ Convert ndarrays in sample to Tensors """
-
-    def __call__(self, sample):
-        # swap axis because
-        # numpy: H x W x C
-        # torch: C x H x W
-        
-        #print("Size is ", sample.shape())
-        #sample = sample.transpose((2, 0, 1)) # May need to flip this for Veloctiy
-        sample = torch.from_numpy(sample)
-        return sample
-
-# tracer_dataset = TracerDataset()
-
-# sample = tracer_dataset[988]
-# # print(0, sample)
-# # print("The size is ", sample.shape)
-# to_tensor = ToTensor()
-# sample = to_tensor(sample)
-# # print(sample)
-# # print(type(sample))
-# # print(sample.shape)
-
+#########################
+# Instantiating Dataset #
+#########################
 tracer_dataset = TracerDataset(transform = ToTensor())
-# for i in range(len(tracer_dataset)-1):
-#     sample = tracer_dataset[i]
 
-#     print(i, sample.size())
+# Creating list of batches alongside an increment of this (for piece-wise error calculations)
+batch_indicies = list(BatchSampler(RandomSampler(range(time_steps)), batch_size=batch_size, drop_last=True)) #Should include workers?
+batch_indicies_incr = [[i + 1 for i in item] for item in batch_indicies]
 
-dataloader = DataLoader(tracer_dataset, batch_size=batch_size,
-                            shuffle=True) # Should add workers
-
+dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies) # Should add workers
+dataloader_incr = DataLoader(tracer_dataset, batch_sampler=batch_indicies_incr)
 
 # Decide whihch device we want to run on
 if torch.cuda.is_available():
     print("CUDA is available!")
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
 
-#print(device)
-# Helper function to print out tracers
-# def show_tracers_batch(sample_batched):
-#     """Show tensors for tracers"""
-#     batch_size = len(sample_batched)
-#     im_size = tracer_input_size
-
-#     for i in range(batch_size):
-#         print(sample_batched[i])
-
-# print(iter(dataloader))
-# real_batch = next(iter(dataloader))
-
-# for i_batch, sample_batched in enumerate(dataloader):
-#     print(i_batch, sample_batched)
 
 #########################
 # Weight Initialisation #
@@ -178,7 +101,7 @@ netD.apply(weights_init)
 ###########################
 # Instantiating Generator #
 ###########################
-netG = Discriminator(ngpu).to(device)
+netG = Generator(ngpu).to(device)
 print(netG)
 
 # Handle multi-gpu if required
@@ -189,26 +112,68 @@ if (device.type == 'cuda') and (ngpu > 1):
 # to mean=0 and sd=0.2
 netG.apply(weights_init)
 
-for i_batch, sample_batched in enumerate(dataloader):
+#################################
+# Loss Functions and Optimisers #
+#################################
+
+## Loss Functions
+mse_loss = nn.MSELoss
+bce_loss = nn.BCELoss
+# *** Physics based Loss *** #
+
+# Labels for training
+real_label = 1
+fake_label = 0
+
+# Setup Adam optimizers
+optimizerAE = optim.Adam(netAE.parameters(), lr=lr, betas=(beta1, 0.999))
+optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
+optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
+
+############
+# Training #
+############
+
+for i_batch, (sample_batched, sample_batched_incr) in enumerate(zip(dataloader, dataloader_incr)):
     data = sample_batched.to(device=device, dtype=torch.float)
-    print(data.size())
-    print("The size of the data before going in is ", data.size())
-    # (Batch, No. Channels, Height, Width)
-    # (16, 1, 10040, 1)
-    # 
-    # input: (N, Cin, L) and output: (N, Cout, Lout)
-    # (Batch Size, No. Channels, Length)
-    # (16, 1, 100040)
-    netAE.zero_grad()
-    outputAE = netAE(data)
-    print("The size of the data after AutoEncoder is ", outputAE.size())
-    print("")
+    data_incr = sample_batched.to(device=device, dtype=torch.float)
 
-    netG.zero_grad()
-    outputG = netG(outputAE)
-    print("The size of the data after Generator is ", outputG.size())
-    print("")
+    #################################################################
+    # (1) Update Discriminator: maximise log(D(x)) + log(1-D(G(z))) #
+    #################################################################
 
+    ## Training with the all-real batch
     netD.zero_grad()
-    outputD = netD(outputAE)
-    print("The size of the data after Discriminator is ", outputD.size())
+    #real_data = data[0].to(device)
+    label = torch.full((batch_size,), real_label, device=device, dtype = torch.float)
+    print("Label is: ", label)
+    print("Label size is : ", label.size())
+    # Forward pass through Discriminator
+    outputD = netD(data)
+    print("The size of the data after Discriminator is ", outputD.size())    
+    # Calculate loss
+    errD_real = bce_loss(outputD, label)
+    # Calculate gradients for D in backward pass
+    errD_real.backward()
+    
+
+    # #print(data.size())
+    # print("The size of the data before going in is ", data.size())
+    # # (Batch, No. Channels, Height, Width)
+    # # (16, 1, 10040, 1)
+    # # 
+    # # input: (N, Cin, L) and output: (N, Cout, Lout)
+    # # (Batch Size, No. Channels, Length)
+    # # (16, 1, 100040)
+    # netAE.zero_grad()
+    # outputAE = netAE(data)
+    # print("The size of the data after AutoEncoder is ", outputAE.size())
+    # print("")
+
+    # netG.zero_grad()
+    # outputG = netG(outputAE)
+    # print("The size of the data after Generator is ", outputG.size())
+    # print("")
+
+    # netD.zero_grad()
+    # outputD = netD(outputAE)
