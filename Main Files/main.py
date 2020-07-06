@@ -117,8 +117,8 @@ netG.apply(weights_init)
 #################################
 
 ## Loss Functions
-mse_loss = nn.MSELoss
-bce_loss = nn.BCELoss
+mse_loss = nn.MSELoss()
+bce_loss = nn.BCELoss()
 # *** Physics based Loss *** #
 
 # Labels for training
@@ -148,11 +148,13 @@ for i_batch, (sample_batched, sample_batched_incr) in enumerate(zip(dataloader, 
     label = torch.full((batch_size,), real_label, device=device, dtype = torch.float)
     print("Label is: ", label)
     print("Label size is : ", label.size())
+    print("Data size is: ", data.size())
     # Forward pass through Discriminator
     outputD = netD(data)
     print("The size of the data after Discriminator is ", outputD.size())    
     # Calculate loss
     errD_real = bce_loss(outputD, label)
+    print("errD_real is: ", errD_real)
     # Calculate gradients for D in backward pass
     errD_real.backward()
     

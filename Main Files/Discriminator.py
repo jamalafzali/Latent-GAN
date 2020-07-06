@@ -13,7 +13,7 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
         self.ngpu = ngpu
         self.main = nn.Sequential(
-            nn.Conv1d(1, 128, 4, 2, 1, bias=False),
+            nn.Conv1d(1, int(tracer_input_size/16), 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
 
             nn.Sigmoid()
