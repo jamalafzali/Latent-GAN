@@ -13,7 +13,7 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
         self.ngpu = ngpu
         self.main = nn.Sequential(
-            nn.Conv1d(nc*4, 128, 4, 2, 1, bias=False),
+            nn.Conv1d(1, 128, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
 
             nn.Sigmoid()
@@ -22,3 +22,19 @@ class Discriminator(nn.Module):
     def forward(self, input):
         output = self.main(input)
         return output
+
+
+# class Discriminator(nn.Module):
+#     def __init__(self, ngpu):
+#         super(Discriminator, self).__init__()
+#         self.ngpu = ngpu
+#         self.main = nn.Sequential(
+#             nn.Conv1d(nc*4, 128, 4, 2, 1, bias=False),
+#             nn.LeakyReLU(0.2, inplace=True),
+
+#             nn.Sigmoid()
+#         )
+    
+#     def forward(self, input):
+#         output = self.main(input)
+#         return output
