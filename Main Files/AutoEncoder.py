@@ -37,4 +37,4 @@ class AutoEncoder(nn.Module):
         output = self.main(input)
         return output
 
-netAE = AutoEncoder(1).to("cuda:0")
+#netAE = AutoEncoder(1).to("cuda:0")
