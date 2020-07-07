@@ -38,15 +38,16 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*8) x 4 x 4
             
-            nn.Conv1d(ndf * 8, ndf * 132, 4, 2, 1, bias=False),
-            nn.BatchNorm1d(ndf * 132),
+            nn.Conv1d(ndf * 8, ndf * 32, 4, 2, 1, bias=False),
+            nn.BatchNorm1d(ndf * 32),
             nn.LeakyReLU(0.2, inplace=True),
 
-            nn.Conv1d(ndf * 32, ndf * 128, 4, 2, 1, bias=False),
-            nn.BatchNorm1d(ndf * 64),
-            nn.LeakyReLU(0.2, inplace=True),
+            # nn.Conv1d(ndf * 32, ndf * 128, 4, 2, 1, bias=False),
+            # nn.BatchNorm1d(ndf * 128),
+            # nn.LeakyReLU(0.2, inplace=True),
 
-            nn.Conv1d(ndf * 128, 1, 4, 1, 0, bias=False),
+            # nn.Conv1d(ndf * 128, 1, 4, 1, 0, bias=False),
+            nn.Conv1d(ndf * 32, 1, 4, 1, 0, bias=False),
           
             nn.Sigmoid()
 
