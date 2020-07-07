@@ -9,7 +9,7 @@ dataroot = ".\celeba"
 workers = 2
 
 # Batch size during training
-batch_size = 16
+batch_size = 8
 
 # Spatial size of training images. All images will be resized to this size using a transformer
 image_size = 64
@@ -21,10 +21,10 @@ nc = 1
 nz = 100
 
 # Size of feature maps in generator
-ngf = 64
+ngf = 128
 
 # Size of feature maps in discriminator
-ndf = 64
+ndf = 128
 
 # Number of training epochs
 num_epochs = 5
@@ -45,4 +45,4 @@ tracer_input_size = 100040
 time_steps = 988
 
 # Latent Space Size
-latent_size = 128
+latent_size = 128 # Use 1024? ~ 100040 / 2*6

@@ -23,6 +23,8 @@ def get_tracer(fileNumber):
     p = np.array([p[:]])
     return p
 
+p = get_tracer(20)
 
+print(p.shape)
 
 
