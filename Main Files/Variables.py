@@ -2,8 +2,6 @@
 # Setting Variables #
 #####################
 
-# Root directory for dataset
-dataroot = ".\celeba"
 
 # Number of workers for dataloader
 workers = 2

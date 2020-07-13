@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 import vtktools
-import pyvista as pv
+#import pyvista as pv
 
 def get_tracer(fileNumber):
     """
@@ -13,7 +13,10 @@ def get_tracer(fileNumber):
         Tracers are returned as numpy array
     """
     #fileNumber = 20
-    filePath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU\LSBU_' + str(fileNumber) + '.vtu'
+    #folderPath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU'
+    # folderPath = '\\vol\\bitbucket\\ja819\\Fluids Dataset\\small3DLSBU'
+    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
+    filePath = folderPath + '/LSBU_' + str(fileNumber) + '.vtu'
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
     ug.GetFieldNames()
@@ -23,8 +26,8 @@ def get_tracer(fileNumber):
     p = np.array([p[:]])
     return p
 
-p = get_tracer(20)
+# p = get_tracer(20)
 
-print(p.shape)
+# print(p.shape)
 
 
