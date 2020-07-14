@@ -1,0 +1,24 @@
+import numpy as np
+import sys
+import vtktools
+import pyvista as pv
+
+sys.path.append('fluidity-master')
+print("Program running....")
+
+arrayOfMax = np.zeros(998)
+arrayOfMin = np.zeros(998)
+
+for i in range(988+1):
+    filename = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU/LSBU_' + str(i) + '.vtu'
+    ug = vtktools.vtu(filename)
+    ug.GetFieldNames()
+
+    # Read the values of the tracers and copy into a vector named p
+    p = ug.GetScalarField('Tracer')
+    arrayOfMax[i] = p.max()
+    arrayOfMin[i] = p.min()
+
+print(arrayOfMax.max())
+print("")
+print(arrayOfMin.min())

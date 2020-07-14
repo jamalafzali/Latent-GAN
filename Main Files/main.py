@@ -28,6 +28,7 @@ from Generator import Generator
 from Variables import *
 from Dataset import *
 from getData import get_tracer
+from Norm import *
 
 #if __name__ == '__main__':
 
@@ -185,6 +186,7 @@ for epoch in range(num_epochs):
         ######################################
         ## Training with the all-fake batch ##
         ######################################
+
         outputAE = netAE(data)
         #print("The size of outputAE is: ", outputAE.size())
         outputG = netG(outputAE)
@@ -240,26 +242,6 @@ for epoch in range(num_epochs):
             print("Generator Loss: ", errG.item())
             print("AutoEncoder Loss: ", errAE.item())
 
-        # #print(data.size())
-        # print("The size of the data before going in is ", data.size())
-        # # (Batch, No. Channels, Height, Width)
-        # # (16, 1, 10040, 1)
-        # # 
-        # # input: (N, Cin, L) and output: (N, Cout, Lout)
-        # # (Batch Size, No. Channels, Length)
-        # # (16, 1, 100040)
-        # netAE.zero_grad()
-        # outputAE = netAE(data)
-        # print("The size of the data after AutoEncoder is ", outputAE.size())
-        # print("")
-
-        # netG.zero_grad()
-        # outputG = netG(outputAE)
-        # print("The size of the data after Generator is ", outputG.size())
-        # print("")
-
-        # netD.zero_grad()
-        # outputD = netD(outputAE)
 
 print("Training complete. Saving model...")
 torch.save({

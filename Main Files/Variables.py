@@ -1,7 +1,6 @@
-#####################
-# Setting Variables #
-#####################
-
+#######################################
+# Setting Variables & Hyperparameters #
+#######################################
 
 # Number of workers for dataloader
 workers = 2
@@ -9,14 +8,8 @@ workers = 2
 # Batch size during training
 batch_size = 8
 
-# Spatial size of training images. All images will be resized to this size using a transformer
-image_size = 64
-
 # Number of channels in the training images.
 nc = 1
-
-# Size of z latent vector (i.e. size of generator input)
-nz = 100
 
 # Size of feature maps in generator
 ngf = 128
@@ -44,3 +37,8 @@ time_steps = 988
 
 # Latent Space Size
 latent_size = 128 # Use 1024? ~ 100040 / 2*6
+
+# Defining minimum and maximums of dataset for normalistion
+x_max = 1.0
+x_min = -0.0011339544173616396
+

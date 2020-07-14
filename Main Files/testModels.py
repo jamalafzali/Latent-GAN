@@ -28,6 +28,7 @@ from Generator import Generator
 from Variables import *
 from Dataset import *
 from getData import get_tracer
+from Norm import *
 
 if torch.cuda.is_available():
     print("CUDA is available!")
@@ -73,7 +74,7 @@ for i_batch, (sample_batched, sample_batched_incr) in enumerate(zip(dataloader, 
     data_incr = sample_batched.to(device=device, dtype=torch.float)
     print("i: ", i_batch)
     torch.set_printoptions(profile="full")
-    print(netG(netAE(data)))
+    print(denormalise(netG(netAE(data)), x_min, x_max))
     torch.set_printoptions(profile="default")
 
 # p = get_tracer(20)
