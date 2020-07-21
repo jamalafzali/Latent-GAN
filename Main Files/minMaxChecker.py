@@ -2,6 +2,8 @@ import numpy as np
 import sys
 import vtktools
 import pyvista as pv
+from Variables import x_min, x_max
+from Norm import normalise
 
 sys.path.append('fluidity-master')
 print("Program running....")
@@ -16,9 +18,13 @@ for i in range(988+1):
 
     # Read the values of the tracers and copy into a vector named p
     p = ug.GetScalarField('Tracer')
+    #p = normalise(p, x_min, x_max)
     arrayOfMax[i] = p.max()
     arrayOfMin[i] = p.min()
 
-print(arrayOfMax.max())
-print("")
-print(arrayOfMin.min())
+arrayOfMin = np.sort(arrayOfMin)
+print(arrayOfMin)
+
+#print(arrayOfMax.max())
+#print("")
+#print(arrayOfMin.min())

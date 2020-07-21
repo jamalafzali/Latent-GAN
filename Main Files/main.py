@@ -29,6 +29,7 @@ from Variables import *
 from Dataset import *
 from getData import get_tracer
 from Norm import *
+from nadam import Nadam
 
 #if __name__ == '__main__':
 
@@ -83,7 +84,6 @@ if (device.type == 'cuda') and (ngpu > 1):
 # to mean=0 and sd=0.2
 netAE.apply(weights_init)
 
-
 ###############################
 # Instantiating Discriminator #
 ###############################
@@ -135,9 +135,12 @@ real_label = 1
 fake_label = 0
 
 # Setup Adam optimizers
-optimizerAE = optim.Adam(netAE.parameters(), lr=lr, betas=(beta1, 0.999)) # Nadam optim?
-optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
-optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
+# optimizerAE = optim.Adam(netAE.parameters(), lr=lr, betas=(beta1, 0.999)) # Nadam optim?
+# optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
+# optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
+optimizerAE = Nadam(netAE.parameters(), lr=lr, betas=(beta1, 0.999)) 
+optimizerG = Nadam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
+optimizerD = Nadam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
 
 ############
 # Training #
@@ -211,9 +214,9 @@ for epoch in range(num_epochs):
         errD.backward()
         optimizerD.step()
 
-        ###############################################################################
-        # (2) Update Generator/Ae: maximise log(D(G(z))) AND minimise MSE + Physics Loss #
-        ###############################################################################
+        ##################################################################################
+        # (2) Update Generator/AE: maximise log(D(G(z))) AND minimise MSE + Physics Loss #
+        ##################################################################################
 
         netAE.zero_grad()
         netG.zero_grad()

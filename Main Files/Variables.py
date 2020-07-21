@@ -3,7 +3,7 @@
 #######################################
 
 # Number of workers for dataloader
-workers = 2
+workers = 4
 
 # Batch size during training
 batch_size = 8
@@ -36,7 +36,7 @@ tracer_input_size = 100040
 time_steps = 988
 
 # Latent Space Size
-latent_size = 128 # Use 1024? ~ 100040 / 2*6
+latent_size = 64 # Use 1024? ~ 100040 / 2*6
 
 # Defining minimum and maximums of dataset for normalistion
 x_max = 1.0
