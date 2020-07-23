@@ -18,7 +18,8 @@ ngf = 128
 ndf = 128
 
 # Number of training epochs
-num_epochs = 30
+num_epochs_AE = 100
+num_epochs_GAN = 100
 
 # Learning rate for optimizers
 lr = 0.000007 # Using for MSE, works fine
@@ -43,3 +44,8 @@ latent_size = 128 # Use 1024? ~ 100040 / 2*6
 x_max = 1.0
 x_min = -0.0011339544173616396
 
+# Validation Percentage (in decimals)
+val_percent = 0.2
+
+# Value to scale MSE Loss up during GAN training
+alpha = 10000

@@ -14,25 +14,25 @@ class Generator(nn.Module):
         self.main = nn.Sequential(
             nn.ConvTranspose1d(latent_size, ndf*8, 4, 2, 1, bias=False),
             nn.BatchNorm1d(ndf*8),
-            nn.Dropout(0.5),
+            #nn.Dropout(0.5),
             nn.LeakyReLU(0.2, inplace=True),
             #nn.ReLU(True), # Try LeakyReLU, nn.LeakyReLU(0.2, inplace=True)
 
             nn.ConvTranspose1d(ndf*8, ndf*4, 4, 2, 1, 1, bias=False),
             nn.BatchNorm1d(ndf*4),
-            nn.Dropout(0.5),
+            #nn.Dropout(0.5),
             nn.LeakyReLU(0.2, inplace=True),
             #nn.ReLU(True),
 
             nn.ConvTranspose1d(ndf*4, ndf*2, 4, 2, 1, bias=False),
             nn.BatchNorm1d(ndf*2),
-            nn.Dropout(0.5),
+            #nn.Dropout(0.5),
             nn.LeakyReLU(0.2, inplace=True),
             #nn.ReLU(True),
 
             nn.ConvTranspose1d(ndf*2, ndf, 4, 2, 1, bias=False),
             nn.BatchNorm1d(ndf),
-            nn.Dropout(0.5),
+            #nn.Dropout(0.5),
             nn.LeakyReLU(0.2, inplace=True),
             #nn.ReLU(True),
 

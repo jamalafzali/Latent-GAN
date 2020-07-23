@@ -1,21 +1,21 @@
-from __future__ import print_function, division
+#from __future__ import print_function, division
 #%matplotlib inline
-import argparse
+#import argparse
 import os
 import random
 import torch
 import torch.nn as nn
-import torch.nn.parallel
-import torch.backends.cudnn as cudnn
+#import torch.nn.parallel
+#import torch.backends.cudnn as cudnn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-import torchvision.datasets as dset
-import torchvision.transforms as transforms
-import torchvision.utils as vutils
+#import torchvision.datasets as dset
+#import torchvision.transforms as transforms
+#import torchvision.utils as vutils
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from IPython.display import HTML
+#import matplotlib.animation as animation
+#from IPython.display import HTML
 
 #import pandas as pd
 #from skimage import io, transform
@@ -99,47 +99,82 @@ optimizerDec = optim.Adam(netDec.parameters(), lr=lr, betas=(beta1, 0.999))
 ############
 epoch_list = []
 loss_list = []
+val_loss_list = []
 
-# Creating list of batches alongside an increment of this (for piece-wise error calculations)
-num_epochs = 100
-for epoch in range(num_epochs):
+# Splitting data between train and validation sets
+ints = list(range(time_steps))
+random.shuffle(ints)
+int_to_split = int(val_percent * time_steps)
+train_ints = ints[int_to_split:]
+val_ints = ints[:int_to_split]
 
-    batch_indicies = list(BatchSampler(RandomSampler(range(time_steps)), batch_size=batch_size, drop_last=True)) #Should include workers?
-    #batch_indicies_incr = [[i + 1 for i in item] for item in batch_indicies]
 
+for epoch in range(num_epochs_AE):
+    # Getting batches for Training set
+    batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
     dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
-    #dataloader_incr = DataLoader(tracer_dataset, batch_sampler=batch_indicies_incr, num_workers=2)
-    
+
+   
     for i_batch, sample_batched in enumerate(dataloader):
-    # for i_batch, (sample_batched, sample_batched_incr) in enumerate(zip(dataloader, dataloader_incr)):
         data = sample_batched.to(device=device, dtype=torch.float)
-        # data_incr = sample_batched.to(device=device, dtype=torch.float)
 
         netEnc.zero_grad()
         netDec.zero_grad()
 
-        outputEnc = netEnc(data)
-        outputDec = netDec(outputEnc)
+        output = netEnc(data)
+        output = netDec(output)
 
-        errAE = mse_loss(outputDec, data)
+        errAE = mse_loss(output, data)
         errAE.backward()
 
         optimizerEnc.step() 
         optimizerDec.step()
 
         if i_batch % 50 == 0:
+            print("Test Loss:")
             print("Epoch: ", epoch, " | i: ", i_batch)
             print("AutoEncoder Loss: ", errAE.item())
     
+    # Get error for Validation set
+    ## Getting batches     
+    val_indicies = list(BatchSampler(RandomSampler(val_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
+    val_dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
+
+    ## Pass through AE and calculate losses
+    errAE_Val = 0
+    for i_batch, sample_batched in enumerate(val_dataloader):
+        data = sample_batched.to(device=device, dtype=torch.float)
+        netEnc.zero_grad()
+        netDec.zero_grad()
+        output = netEnc(data)
+        output = netDec(output.detach()).detach()
+        errAE_Val += mse_loss(output, data)
+        
+
+    print("The length of val set is ", len(val_dataloader))
+    errAE_Val /= len(val_dataloader)
+
     # Storing losses per epoch to plot
     epoch_list.append(epoch)
     loss_list.append(errAE.item())
+    val_loss_list.append(errAE_Val.item())
+    print("Validation Loss:", errAE_Val.item())
 
-plt.plot(epoch_list, loss_list)
+plt.plot(epoch_list, loss_list, label="Test Loss")
+plt.plot(epoch_list, val_loss_list, label="Validation Loss")
 plt.xlabel('Epochs')
 plt.ylabel('AE Loss')
+plt.legend()
 plt.show()
 
+# plt.plot(epoch_list, g_loss_list, label="Generator")
+# plt.plot(epoch_list, d_loss_list, label="Discriminator")
+# plt.plot(epoch_list, bce_loss_list, label="G_BCE Loss")
+# plt.plot(epoch_list, mse_loss_list, label="G_MSE Loss")
+# plt.xlabel('Epochs')
+# plt.ylabel('Loss')
+# plt.legend()
+# plt.show()
 
 print("Training complete. Saving model...")
 torch.save({
@@ -147,5 +182,5 @@ torch.save({
             'netDec_state_dict': netDec.state_dict(), 
             'optimizerEnc_state_dict': optimizerEnc.state_dict(),
             'optimizerDec_state_dict': optimizerDec.state_dict() },
-            "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AutoEncoder64")
+            "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AutoEncoder128")
 print("Model has saved successfully!")

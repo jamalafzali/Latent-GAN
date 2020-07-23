@@ -97,26 +97,26 @@ print(netEnc)
 # print(weights)
 # print("The type of weights is: ", type(weights[0][0][0]))
 
-# print(batch_indicies)
-# for i_batch, (sample_batched, sample_batched_incr) in enumerate(zip(dataloader, dataloader_incr)):
-#     # Am I passing the same batches through each epoch?
-#     data = sample_batched.to(device=device, dtype=torch.float)
-#     data_incr = sample_batched.to(device=device, dtype=torch.float)
-#     print("i: ", i_batch)
-#     torch.set_printoptions(profile="full")
-#     #print(denormalise(data, x_min, x_max))
-#     # print("Data:")
-#     # print(data[0][0][34232].item())
-#     # print(data[0][0][34232].type())
-#     #print("Normalised output:")
-#     #print(netDec(netEnc(data)), x_min, x_max)
-#     #print("Denormalised output:")
-#     output = denormalise(netDec(netEnc(data)), x_min, x_max)
-#     print(output)
-#     # print(denormalise(netG(netEnc(data)), x_min, x_max))
-#     # torch.set_printoptions(profile="default")
-#     print("The loss of this batch is: ", mse_loss(output, denormalise(data_incr,x_min,x_max)).item())
-#     break
+print(batch_indicies)
+for i_batch, (sample_batched, sample_batched_incr) in enumerate(zip(dataloader, dataloader_incr)):
+    # Am I passing the same batches through each epoch?
+    data = sample_batched.to(device=device, dtype=torch.float)
+    data_incr = sample_batched.to(device=device, dtype=torch.float)
+    print("i: ", i_batch)
+    torch.set_printoptions(profile="full")
+    #print(denormalise(data, x_min, x_max))
+    # print("Data:")
+    # print(data[0][0][34232].item())
+    # print(data[0][0][34232].type())
+    #print("Normalised output:")
+    #print(netDec(netEnc(data)), x_min, x_max)
+    #print("Denormalised output:")
+    output = denormalise(netDec(netEnc(data)), x_min, x_max)
+    print(output)
+    # print(denormalise(netG(netEnc(data)), x_min, x_max))
+    # torch.set_printoptions(profile="default")
+    print("The loss of this batch is: ", mse_loss(output, denormalise(data_incr,x_min,x_max)).item())
+    break
 
 
 # # p = get_tracer(20)
