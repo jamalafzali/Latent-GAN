@@ -14,8 +14,8 @@ def get_tracer(fileNumber):
     :return: numpy array
         Tracers are returned as numpy array
     """
-    folderPath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU'
-    #folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
+    #folderPath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU'
+    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
     filePath = folderPath + '/LSBU_' + str(fileNumber) + '.vtu'
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
@@ -39,8 +39,8 @@ def get_tracer_from_latent(fileNumber):
     :return: numpy array
         Tracers are returned as numpy array
     """
-    folderPath = 'E:/MSc Individual Project/Fluids Dataset/LatentSpace'
-    #folderPath = '/vol/bitbucket/ja819/Fluids Dataset/LatentSpace'
+    #folderPath = 'E:/MSc Individual Project/Fluids Dataset/LatentSpace'
+    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/LatentSpace'
     filePath = folderPath + '/LS_' + str(fileNumber) + '.csv'
     p = np.loadtxt(filePath, delimiter=",")
 

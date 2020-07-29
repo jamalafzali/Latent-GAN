@@ -108,16 +108,15 @@ int_to_split = int(val_percent * time_steps)
 train_ints = ints[int_to_split:]
 val_ints = ints[:int_to_split]
 
-
+num_epochs_AE = 5
 for epoch in range(num_epochs_AE):
     # Getting batches for Training set
     batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
-    dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies)#, num_workers=2) # Should add workers
+    dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
 
    
     for i_batch, sample_batched in enumerate(dataloader):
         data = sample_batched.to(device=device, dtype=torch.float)
-        print("The size of data is: ", data.size())
 
         netEnc.zero_grad()
         netDec.zero_grad()
@@ -150,10 +149,9 @@ for epoch in range(num_epochs_AE):
         output = netEnc(data)
         output = netDec(output.detach()).detach()
         errAE_Val += mse_loss(output, data)
-        print("hello")
         
 
-    print("The length of val set is ", len(val_dataloader))
+    #print("The length of val set is ", len(val_dataloader))
     errAE_Val /= len(val_dataloader)
 
     # Storing losses per epoch to plot
