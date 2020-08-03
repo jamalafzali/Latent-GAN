@@ -9,7 +9,7 @@ from Discriminator import Discriminator
 from Generator import Generator
 from Variables import *
 from Dataset import *
-from getData import get_tracer
+#from getData import get_tracer
 from Norm import *
 from nadam import Nadam
 from createVTU import create_tracer_VTU
@@ -29,7 +29,8 @@ netEnc = Encoder(ngpu).to(device)
 # Setup Adam optimizers
 optimizerEnc = Nadam(netEnc.parameters(), lr=lr, betas=(beta1, 0.999))
 
-checkpoint = torch.load("E:/MSc Individual Project/Models/AutoEncoder64")
+#checkpoint = torch.load("E:/MSc Individual Project/Models/AutoEncoder64")
+checkpoint = torch.load("/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AutoEncoderVF200")
 
 netEnc.load_state_dict(checkpoint['netEnc_state_dict'])
 optimizerEnc.load_state_dict(checkpoint['optimizerEnc_state_dict'])
@@ -58,8 +59,8 @@ for i_batch, sample_batched in enumerate(dataloader):
     output = netEnc(data)
     output = np.array(output.squeeze().cpu().detach())
 
-    #fileLocation = "/vol/bitbucket/ja819/Fluids Dataset/LatentSpace/LS_" + str(i_batch) +".csv"
-    fileLocation = "E:/MSc Individual Project/Fluids Dataset/LatentSpace/LS_" + str(i_batch) +".csv"
+    fileLocation = "/vol/bitbucket/ja819/Fluids Dataset/LatentSpaceVF/LS_" + str(i_batch) +".csv"
+    #fileLocation = "E:/MSc Individual Project/Fluids Dataset/LatentSpaceVF/LS_" + str(i_batch) +".csv"
     np.savetxt(fileLocation, output, delimiter=",")
     print(i_batch)
 

@@ -35,14 +35,16 @@ def create_tracer_VTU(fileNumber, prediction, networkName):
     :param networkName: string
         Name of the network e.g. "AE", "GAN" or "AEGAN" etc.
     """
-    folderPath = 'E:/MSc Individual Project/Fluids Dataset/small3DLSBU'
+    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
+    #folderPath = 'E:/MSc Individual Project/Fluids Dataset/small3DLSBU'
     filePath = folderPath + '/LSBU_' + str(fileNumber+1) + '.vtu'
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
 
     ug.AddScalarField('Prediction' + networkName, prediction)
     
-    saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/predictionsGAN3'
-    saveFilePath = saveFolderPath + '/' + networkName + '_' + str(fileNumber) + '.vtu'
+    #saveFolderPath = '/vol/bitbucket/ja819/Fluids Dataset/LatentSpaceVF'
+    saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/predictions'
+    saveFilePath = saveFolderPath + networkName + '/' + networkName + '_' + str(fileNumber) + '.vtu'
 
     ug.Write(saveFilePath)

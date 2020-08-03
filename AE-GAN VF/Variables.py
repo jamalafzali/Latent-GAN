@@ -6,7 +6,7 @@
 workers = 2
 
 # Batch size during training
-batch_size = 2
+batch_size = 4
 
 # Number of channels in the training images.
 nc = 3
@@ -18,7 +18,7 @@ ngf = 128
 ndf = 128
 
 # Number of training epochs
-num_epochs_AE = 100
+num_epochs_AE = 200
 num_epochs_GAN = 100
 
 # Learning rate for optimizers
@@ -48,4 +48,4 @@ x_min = -11.642094691563011
 val_percent = 0.2
 
 # Value to scale MSE Loss up during GAN training
-alpha = 10000
+alpha = 10

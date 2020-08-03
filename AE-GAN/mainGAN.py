@@ -178,7 +178,7 @@ for epoch in range(num_epochs_GAN):
         data_incr = sample_batched.to(device=device, dtype=torch.float)
         data_latent = sample_batched_latent.to(device=device, dtype=torch.float)
         #data_latent_incr = sample_batched_latent_incr.to(device=device, dtype=torch.float)
-
+        
         #################################################################
         # (1) Update Discriminator: maximise log(D(x)) + log(1-D(G(z))) #
         #################################################################
