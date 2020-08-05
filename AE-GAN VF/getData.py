@@ -33,7 +33,7 @@ def get_velocity_field(fileNumber):
 p = get_velocity_field(500)
 print(p.shape)
 
-def get_tracer_from_latent(fileNumber):
+def get_velocity_field_from_latent(fileNumber):
     """
     Used to get the Tracers as a numpy array corresponding to a csv file from the Latent dataset 
     :param fileNumber: int or string
@@ -42,11 +42,11 @@ def get_tracer_from_latent(fileNumber):
     :return: numpy array
         Tracers are returned as numpy array
     """
-    folderPath = 'E:/MSc Individual Project/Fluids Dataset/LatentSpace'
-    #folderPath = '/vol/bitbucket/ja819/Fluids Dataset/LatentSpace'
+    #folderPath = 'E:/MSc Individual Project/Fluids Dataset/LatentSpace'
+    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/LatentSpaceVF'
     filePath = folderPath + '/LS_' + str(fileNumber) + '.csv'
     p = np.loadtxt(filePath, delimiter=",")
-
+    #p = p.transpose()
     return p
 
 def get_prediction_tracer(fileNumber):

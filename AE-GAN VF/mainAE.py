@@ -138,7 +138,7 @@ for epoch in range(num_epochs_AE):
     # Get error for Validation set
     ## Getting batches     
     val_indicies = list(BatchSampler(RandomSampler(val_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
-    val_dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
+    val_dataloader = DataLoader(tracer_dataset, batch_sampler=val_indicies, num_workers=2) # Should add workers
 
     ## Pass through AE and calculate losses
     errAE_Val = 0

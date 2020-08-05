@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.sampler import BatchSampler, RandomSampler
 from Variables import *
-from getData import get_velocity_field
+from getData import get_velocity_field, get_velocity_field_from_latent
 
 ########################
 # Creating the dataset #
@@ -78,7 +78,7 @@ class TracerLatentDataset(Dataset):
             idx = idx.tolist()
         
         #sample = get_tracer(idx)
-        sample = get_tracer_from_latent(idx)
+        sample = get_velocity_field_from_latent(idx)
         if self.transform:
             sample = self.transform(sample)
 

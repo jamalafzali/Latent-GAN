@@ -35,13 +35,18 @@ def create_velocity_field_VTU(fileNumber, prediction, networkName):
     :param networkName: string
         Name of the network e.g. "AE", "GAN" or "AEGAN" etc.
     """
-    folderPath = 'E:/MSc Individual Project/Fluids Dataset/small3DLSBU'
+    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
+    #folderPath = 'E:/MSc Individual Project/Fluids Dataset/small3DLSBU'
     filePath = folderPath + '/LSBU_' + str(fileNumber+1) + '.vtu'
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
     
+<<<<<<< HEAD
     ug.AddVectorField('Prediction' + networkName, prediction)
     
+=======
+    #saveFolderPath = '/vol/bitbucket/ja819/Fluids Dataset/LatentSpaceVF'
+>>>>>>> 6e74aa15ea4a419d09b9d07b55b89e6b244ef52a
     saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/predictions'
     saveFilePath = saveFolderPath + networkName + '/' + networkName + '_' + str(fileNumber) + '.vtu'
 

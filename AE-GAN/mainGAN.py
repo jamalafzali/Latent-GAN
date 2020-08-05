@@ -1,28 +1,15 @@
 from __future__ import print_function, division
 #%matplotlib inline
-import argparse
 import os
 import random
 import torch
 import torch.nn as nn
-import torch.nn.parallel
-import torch.backends.cudnn as cudnn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-import torchvision.datasets as dset
-import torchvision.transforms as transforms
-import torchvision.utils as vutils
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from IPython.display import HTML
 import random
-
-#import pandas as pd
-#from skimage import io, transform
-
 from torchvision import transforms, utils
-
 from AutoEncoder import Encoder, Decoder
 from Discriminator import Discriminator
 from Generator import Generator
@@ -31,6 +18,7 @@ from Dataset import *
 from getData import get_tracer
 from Norm import *
 from nadam import Nadam
+import csv
 
 #########################
 # Instantiating Dataset #
@@ -146,6 +134,7 @@ g_loss_list = []
 mse_loss_list = []
 bce_loss_list = []
 d_loss_list = []
+val_loss_list = []
 
 # Splitting data between train and validation sets
 ints = list(range(time_steps))
@@ -164,21 +153,13 @@ for epoch in range(num_epochs_GAN):
     dataloader_incr = DataLoader(tracer_dataset, batch_sampler=batch_indicies_incr, num_workers=2)
     dataloader_latent = DataLoader(tracer_latent_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
 
-    # Getting batches for Validation set    
-    val_indicies = list(BatchSampler(RandomSampler(val_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
-    val_indicies_incr = [[i + 1 for i in item] for item in val_indicies]
-
-    valloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
-    valloader_incr = DataLoader(tracer_dataset, batch_sampler=batch_indicies_incr, num_workers=2)
-    valloader_latent = DataLoader(tracer_latent_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
-    
-
     for i_batch, (sample_batched, sample_batched_incr, sample_batched_latent) in enumerate(zip(dataloader, dataloader_incr, dataloader_latent)):
+        #print(i_batch)
         data = sample_batched.to(device=device, dtype=torch.float)
         data_incr = sample_batched.to(device=device, dtype=torch.float)
         data_latent = sample_batched_latent.to(device=device, dtype=torch.float)
         #data_latent_incr = sample_batched_latent_incr.to(device=device, dtype=torch.float)
-
+        
         #################################################################
         # (1) Update Discriminator: maximise log(D(x)) + log(1-D(G(z))) #
         #################################################################
@@ -200,6 +181,7 @@ for epoch in range(num_epochs_GAN):
         #outputEnc = netEnc(data)
         #outputG = netG(outputEnc.detach())
         outputG = netG(data_latent)
+        #print(outputG.size())
         outputD_fake = netD(outputG.detach()) 
         
         fake_label = random.randint(0,30)/100
@@ -236,16 +218,39 @@ for epoch in range(num_epochs_GAN):
         # Update Gradients
         optimizerG.step()
 
-        # Display losses
-        # if i_batch % 50 == 0:
-        #     print("Training Losses")
-        #     print("Epoch: ", epoch, " | i: ", i_batch)
-        #     print("Discriminator Loss: ", errD.item())
-        #     print("Generator Loss: ", errG.item())
-        #     print("Gen BCE Loss:", errBCE.item())
-        #     print("Gen MSE Loss:", alpha*errMSE.item())
+        #Display losses
+        if i_batch % 50 == 0:
+            print("Training Losses")
+            print("Epoch: ", epoch, " | i: ", i_batch)
+            print("Discriminator Loss: ", errD.item())
+            print("Generator Loss: ", errG.item())
+            print("Gen BCE Loss:", errBCE.item())
+            print("Gen MSE Loss:", alpha*errMSE.item())
         
     # Validation errors
+    ## Getting batches for Validation set    
+    val_indicies = list(BatchSampler(RandomSampler(val_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
+    val_indicies_incr = [[i + 1 for i in item] for item in val_indicies]
+
+    val_dataloader = DataLoader(tracer_dataset, batch_sampler=val_indicies, num_workers=2) # Should add workers
+    val_dataloader_incr = DataLoader(tracer_dataset, batch_sampler=val_indicies_incr, num_workers=2)
+    val_dataloader_latent = DataLoader(tracer_latent_dataset, batch_sampler=val_indicies, num_workers=2) # Should add workers
+    
+    ## Pass through networks and calculate losses
+    errG_val_mse = 0
+    for i_batch, (sample_batched_incr, sample_batched_latent) in enumerate(zip(val_dataloader_incr, val_dataloader_latent)):
+        data_incr = sample_batched.to(device=device, dtype=torch.float)
+        data_latent = sample_batched_latent.to(device=device, dtype=torch.float)
+
+        # Pass through Generator
+        netG.zero_grad()
+        outputG = netG(data_latent).detach()
+        errG_val_mse += mse_loss(outputG, data_incr)
+    
+    ## Display Validation losses
+    errG_val_mse /= len(val_dataloader)
+    errG_val_mse *= alpha
+    print("Validation G_MSE Loss: ", errG_val_mse.item())
     
 
     # Storing losses per epoch to plot
@@ -254,19 +259,9 @@ for epoch in range(num_epochs_GAN):
     bce_loss_list.append(errBCE.item())
     mse_loss_list.append(alpha*errMSE.item())
     d_loss_list.append(errD.item())
+    val_loss_list.append(errG_val_mse.item())
 
-    # Display Validation losses
     
-
-
-plt.plot(epoch_list, g_loss_list, label="Generator")
-plt.plot(epoch_list, d_loss_list, label="Discriminator")
-plt.plot(epoch_list, bce_loss_list, label="G_BCE Loss")
-plt.plot(epoch_list, mse_loss_list, label="G_MSE Loss")
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
 
 print("Training complete. Saving model...")
 torch.save({
@@ -274,5 +269,25 @@ torch.save({
             'netD_state_dict': netD.state_dict(),
             'optimizerG_state_dict': optimizerG.state_dict(),
             'optimizerD_state_dict': optimizerD.state_dict() },
-            "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/GAN64")
+            "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/GANUps")
 print("Model has saved successfully!")
+
+# Save graph outputs
+newfilePath = '/vol/bitbucket/ja819/Python Files/Latent-GAN/AE-GAN/GANgraphs/GANUps.csv'
+rows = zip(epoch_list, g_loss_list, d_loss_list, bce_loss_list, mse_loss_list, val_loss_list)
+with open(newfilePath, "w") as f:
+    writer = csv.writer(f)
+    for row in rows:
+        writer.writerow(row)
+
+
+plt.plot(epoch_list, g_loss_list, label="Generator")
+plt.plot(epoch_list, d_loss_list, label="Discriminator")
+plt.plot(epoch_list, bce_loss_list, label="G_BCE Loss")
+plt.plot(epoch_list, mse_loss_list, label="G_MSE Loss")
+plt.plot(epoch_list, val_loss_list, label="Validation G_MSE")
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+
