@@ -243,9 +243,9 @@ for epoch in range(num_epochs_GAN):
     d_loss_list.append(errD.item())
     val_loss_list.append(errG_val_mse.item())
 
-    # Display Validation losses
     
-
+# Save graph info   
+    
 plt.plot(epoch_list, g_loss_list, label="Generator")
 plt.plot(epoch_list, d_loss_list, label="Discriminator")
 plt.plot(epoch_list, bce_loss_list, label="G_BCE Loss")
