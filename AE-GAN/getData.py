@@ -14,8 +14,8 @@ def get_tracer(fileNumber):
     :return: numpy array
         Tracers are returned as numpy array
     """
-    #folderPath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU'
-    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
+    folderPath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU'
+    #folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
     filePath = folderPath + '/LSBU_' + str(fileNumber) + '.vtu'
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
@@ -55,7 +55,7 @@ def get_prediction_tracer(fileNumber):
     :return: numpy array
         Tracers are returned as numpy array
     """
-    folderPath = 'E:/MSc Individual Project/Fluids Dataset/predictionsGAN2'
+    folderPath = 'E:/MSc Individual Project/Fluids Dataset/tracerGAN-DA'
     #folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
     filePath = folderPath + '/GAN_' + str(fileNumber) + '.vtu'
     sys.path.append('fluidity-master')

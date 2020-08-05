@@ -9,10 +9,10 @@ from Discriminator import Discriminator
 from Generator import Generator
 from Variables import *
 from Dataset import *
-from getData import get_tracer
+from getData import get_velocity_field
 from Norm import *
 from nadam import Nadam
-from createVTU import create_tracer_VTU
+from createVTU import create_velocity_field_VTU
 
 if torch.cuda.is_available():
     print("CUDA is available!")
@@ -35,7 +35,7 @@ optimizerDec = Nadam(netDec.parameters(), lr=lr, betas=(beta1, 0.999))
 # optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
 # optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
 
-checkpoint = torch.load("E:/MSc Individual Project/Models/AutoEncoder64")
+checkpoint = torch.load("E:/MSc Individual Project/Models/AutoEncoderVF200")
 netEnc.load_state_dict(checkpoint['netEnc_state_dict'])
 netDec.load_state_dict(checkpoint['netDec_state_dict'])
 optimizerEnc.load_state_dict(checkpoint['optimizerEnc_state_dict'])
@@ -66,15 +66,16 @@ dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies)#, num_work
 # print(weights)
 # print("The type of weights is: ", type(weights[0][0][0]))
 
-print(batch_indicies)
+#print(batch_indicies)
 #for i_batch, (sample_batched, sample_batched_incr) in enumerate(zip(dataloader, dataloader_incr)):
 for i_batch, sample_batched in enumerate(dataloader):
     data = sample_batched.to(device=device, dtype=torch.float)
     #data_incr = sample_batched.to(device=device, dtype=torch.float)
     output = denormalise(netDec(netEnc(data)), x_min, x_max)
     #output = denormalise(netDec(netEnc(data)), x_min, x_max)
-    output = np.array(output.squeeze().cpu().detach())
-    create_tracer_VTU(i_batch, output, "AE")
+    output = np.array(output.squeeze().cpu().detach()).transpose()
+    #print("The shape is : ",output.shape)
+    create_velocity_field_VTU(i_batch, output, "AEVF")
     print(i_batch)
     #print(np.array(output.squeeze().cpu().detach()))
     # print(denormalise(netG(netEnc(data)), x_min, x_max))

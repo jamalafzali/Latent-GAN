@@ -42,7 +42,7 @@ def create_tracer_VTU(fileNumber, prediction, networkName):
 
     ug.AddScalarField('Prediction' + networkName, prediction)
     
-    saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/predictionsGAN3'
+    saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/tracerGAN-DA'
     saveFilePath = saveFolderPath + '/' + networkName + '_' + str(fileNumber) + '.vtu'
 
     ug.Write(saveFilePath)
