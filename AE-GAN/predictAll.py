@@ -35,7 +35,7 @@ optimizerDec = Nadam(netDec.parameters(), lr=lr, betas=(beta1, 0.999))
 # optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
 # optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
 
-checkpoint = torch.load("E:/MSc Individual Project/Models/AutoEncoder64")
+checkpoint = torch.load("E:/MSc Individual Project/Models/AutoEncoderVF")
 netEnc.load_state_dict(checkpoint['netEnc_state_dict'])
 netDec.load_state_dict(checkpoint['netDec_state_dict'])
 optimizerEnc.load_state_dict(checkpoint['optimizerEnc_state_dict'])
