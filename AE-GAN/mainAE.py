@@ -108,7 +108,7 @@ int_to_split = int(val_percent * time_steps)
 train_ints = ints[int_to_split:]
 val_ints = ints[:int_to_split]
 
-num_epochs_AE = 5
+
 for epoch in range(num_epochs_AE):
     # Getting batches for Training set
     batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
@@ -177,10 +177,10 @@ plt.show()
 # plt.show()
 
 print("Training complete. Saving model...")
-torch.save({
-            'netEnc_state_dict': netEnc.state_dict(), 
-            'netDec_state_dict': netDec.state_dict(), 
-            'optimizerEnc_state_dict': optimizerEnc.state_dict(),
-            'optimizerDec_state_dict': optimizerDec.state_dict() },
-            "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AutoEncoder128")
-print("Model has saved successfully!")
+# torch.save({
+#             'netEnc_state_dict': netEnc.state_dict(), 
+#             'netDec_state_dict': netDec.state_dict(), 
+#             'optimizerEnc_state_dict': optimizerEnc.state_dict(),
+#             'optimizerDec_state_dict': optimizerDec.state_dict() },
+#             "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AutoEncoder128")
+# print("Model has saved successfully!")
