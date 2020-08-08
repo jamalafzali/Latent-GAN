@@ -9,10 +9,10 @@ from Discriminator import Discriminator
 from Generator import Generator
 from Variables import *
 from Dataset import *
-from getData import get_tracer
+from getData import get_velocity_field
 from Norm import *
 from nadam import Nadam
-from createVTU import create_tracer_VTU
+from createVTU import create_velocity_field_VTU
 
 if torch.cuda.is_available():
     print("CUDA is available!")
@@ -50,7 +50,7 @@ optimizerD.load_state_dict(checkpoint['optimizerD_state_dict'])
 
 mse_loss = nn.MSELoss()
 
-tracer_dataset = TracerLatentDataset(transform = ToTensor())
+tracer_dataset = TracerDataset(transform = ToTensor())
 
 batch_indicies = []
 for i in range(3729):
@@ -71,11 +71,18 @@ print(batch_indicies)
 for i_batch, sample_batched in enumerate(dataloader):
     data = sample_batched.to(device=device, dtype=torch.float)
     #data_incr = sample_batched.to(device=device, dtype=torch.float)
+<<<<<<< HEAD
+    output = denormalise(netG(netEnc(data)), x_min, x_max)
+    #output = denormalise(netDec(netEnc(data)), x_min, x_max)
+    output = np.array(output.squeeze().cpu().detach()).transpose()
+    create_velocity_field_VTU(i_batch, output, "GANVF")
+=======
     #output = denormalise(netG(data), x_min, x_max)
     #output = denormalise(netDec(netEnc(data)), x_min, x_max)
     output = denormalise(netG(netEnc(data)), x_min, x_max)
     output = np.array(output.squeeze().cpu().detach())
     create_tracer_VTU(i_batch, output, "GANVF")
+>>>>>>> 6e74aa15ea4a419d09b9d07b55b89e6b244ef52a
     print(i_batch)
     #print(np.array(output.squeeze().cpu().detach()))
     # print(denormalise(netG(netEnc(data)), x_min, x_max))

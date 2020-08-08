@@ -24,7 +24,7 @@ import vtktools
 # #contador += 1
 # #print(contador)
 
-def create_tracer_VTU(fileNumber, prediction, networkName):
+def create_velocity_field_VTU(fileNumber, prediction, networkName):
     """
     Duplicates preexisting VTU file and attaches a prediction field alongside it
     :param fileNumber: int or string
@@ -40,10 +40,13 @@ def create_tracer_VTU(fileNumber, prediction, networkName):
     filePath = folderPath + '/LSBU_' + str(fileNumber+1) + '.vtu'
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
-
-    ug.AddScalarField('Prediction' + networkName, prediction)
     
+<<<<<<< HEAD
+    ug.AddVectorField('Prediction' + networkName, prediction)
+    
+=======
     #saveFolderPath = '/vol/bitbucket/ja819/Fluids Dataset/LatentSpaceVF'
+>>>>>>> 6e74aa15ea4a419d09b9d07b55b89e6b244ef52a
     saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/predictions'
     saveFilePath = saveFolderPath + networkName + '/' + networkName + '_' + str(fileNumber) + '.vtu'
 

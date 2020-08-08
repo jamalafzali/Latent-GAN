@@ -1,3 +1,7 @@
+###############################################################
+# Predict Tracers using GAN by continuously feeding itself in #
+###############################################################
+
 import random
 import torch
 import torch.nn as nn
