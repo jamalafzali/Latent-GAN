@@ -4,6 +4,7 @@ import vtktools
 #import pyvista as pv
 from Variables import x_max, x_min
 from Norm import normalise, denormalise
+import pyvista as pv
 
 def get_velocity_field(fileNumber):
     """
@@ -14,8 +15,8 @@ def get_velocity_field(fileNumber):
     :return: numpy array
         Tracers are returned as numpy array
     """
-    folderPath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU'
-    #folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
+    #folderPath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU'
+    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
     filePath = folderPath + '/LSBU_' + str(fileNumber) + '.vtu'
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
@@ -30,8 +31,7 @@ def get_velocity_field(fileNumber):
     p = p.transpose()
     #p = np.array([p[:]])
     return p
-p = get_velocity_field(500)
-print(p.shape)
+
 
 def get_velocity_field_from_latent(fileNumber):
     """
@@ -47,6 +47,30 @@ def get_velocity_field_from_latent(fileNumber):
     filePath = folderPath + '/LS_' + str(fileNumber) + '.csv'
     p = np.loadtxt(filePath, delimiter=",")
     #p = p.transpose()
+    return p
+
+def get_velocity_field_structured(fileNumber):
+    """
+    Used to get the Velocity Field as a numpy array corresponding to a vtu file from the Fluids dataset 
+    :param fileNumber: int or string
+        Used to identify which vtu file to return
+        Values are between 0 and 988
+    :return: numpy array
+        Tracers are returned as numpy array
+    """
+    #folderPath = 'E:\MSc Individual Project\Fluids Dataset\small3DLSBU'
+    folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU-Structured'
+    filePath = folderPath + '/LSBU_' + str(fileNumber) + '.vtk'
+    sys.path.append('fluidity-master')
+    mesh = pv.read(filePath)
+    p = mesh.point_arrays['Velocity']
+
+    # Normalise p
+    p = normalise(p, x_min, x_max)
+    # Convert p into 1 x N array
+    p = np.array(p)
+    p = p.transpose()
+    #p = np.array([p[:]])
     return p
 
 def get_prediction_tracer(fileNumber):

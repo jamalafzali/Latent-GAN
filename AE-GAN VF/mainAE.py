@@ -34,14 +34,14 @@ from nadam import Nadam
 #########################
 # Instantiating Dataset #
 #########################
-tracer_dataset = TracerDataset(transform = ToTensor())
+velocity_dataset = VelocityFieldDataset(transform = ToTensor())
 
 # # Creating list of batches alongside an increment of this (for piece-wise error calculations)
 # batch_indicies = list(BatchSampler(RandomSampler(range(time_steps)), batch_size=batch_size, drop_last=True)) #Should include workers?
 # batch_indicies_incr = [[i + 1 for i in item] for item in batch_indicies]
 
-# dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
-# dataloader_incr = DataLoader(tracer_dataset, batch_sampler=batch_indicies_incr, num_workers=2)
+# dataloader = DataLoader(velocity_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
+# dataloader_incr = DataLoader(velocity_dataset, batch_sampler=batch_indicies_incr, num_workers=2)
 
 # Decide whihch device we want to run on
 if torch.cuda.is_available():
@@ -112,7 +112,7 @@ val_ints = ints[:int_to_split]
 for epoch in range(num_epochs_AE):
     # Getting batches for Training set
     batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
-    dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
+    dataloader = DataLoader(velocity_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
 
    
     for i_batch, sample_batched in enumerate(dataloader):
@@ -138,7 +138,7 @@ for epoch in range(num_epochs_AE):
     # Get error for Validation set
     ## Getting batches     
     val_indicies = list(BatchSampler(RandomSampler(val_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
-    val_dataloader = DataLoader(tracer_dataset, batch_sampler=val_indicies, num_workers=2) # Should add workers
+    val_dataloader = DataLoader(velocity_dataset, batch_sampler=val_indicies, num_workers=2) # Should add workers
 
     ## Pass through AE and calculate losses
     errAE_Val = 0
@@ -146,8 +146,10 @@ for epoch in range(num_epochs_AE):
         data = sample_batched.to(device=device, dtype=torch.float)
         netEnc.zero_grad()
         netDec.zero_grad()
+        
         output = netEnc(data)
         output = netDec(output.detach()).detach()
+        
         errAE_Val += mse_loss(output, data)
         
 
@@ -167,14 +169,14 @@ plt.ylabel('AE Loss')
 plt.legend()
 plt.show()
 
-# plt.plot(epoch_list, g_loss_list, label="Generator")
-# plt.plot(epoch_list, d_loss_list, label="Discriminator")
-# plt.plot(epoch_list, bce_loss_list, label="G_BCE Loss")
-# plt.plot(epoch_list, mse_loss_list, label="G_MSE Loss")
-# plt.xlabel('Epochs')
-# plt.ylabel('Loss')
-# plt.legend()
-# plt.show()
+# Save graph outputs
+newfilePath = '/vol/bitbucket/ja819/Python Files/Latent-GAN/AE-GAN/GANgraphs/AE-VF-S2.csv'
+rows = zip(epoch_list, loss_list, val_loss_list)
+with open(newfilePath, "w") as f:
+    writer = csv.writer(f)
+    for row in rows:
+        writer.writerow(row)
+
 
 print("Training complete. Saving model...")
 torch.save({
@@ -182,5 +184,5 @@ torch.save({
             'netDec_state_dict': netDec.state_dict(), 
             'optimizerEnc_state_dict': optimizerEnc.state_dict(),
             'optimizerDec_state_dict': optimizerDec.state_dict() },
-            "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AutoEncoderVF")
+            "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AE-VF-S2")
 print("Model has saved successfully!")

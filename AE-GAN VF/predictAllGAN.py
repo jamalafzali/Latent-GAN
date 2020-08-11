@@ -35,7 +35,7 @@ optimizerEnc = Nadam(netEnc.parameters(), lr=lr, betas=(beta1, 0.999))
 optimizerG = Nadam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
 optimizerD = optim.SGD(netD.parameters(), lr=lr)
 
-checkpoint = torch.load("E:/MSc Individual Project/Models/AutoEncoderVF200")
+checkpoint = torch.load("E:/MSc Individual Project/Models/AE-VF-S")
 netEnc.load_state_dict(checkpoint['netEnc_state_dict'])
 # netDec.load_state_dict(checkpoint['netDec_state_dict'])
 optimizerEnc.load_state_dict(checkpoint['optimizerEnc_state_dict'])
@@ -71,18 +71,10 @@ print(batch_indicies)
 for i_batch, sample_batched in enumerate(dataloader):
     data = sample_batched.to(device=device, dtype=torch.float)
     #data_incr = sample_batched.to(device=device, dtype=torch.float)
-<<<<<<< HEAD
     output = denormalise(netG(netEnc(data)), x_min, x_max)
     #output = denormalise(netDec(netEnc(data)), x_min, x_max)
     output = np.array(output.squeeze().cpu().detach()).transpose()
     create_velocity_field_VTU(i_batch, output, "GANVF")
-=======
-    #output = denormalise(netG(data), x_min, x_max)
-    #output = denormalise(netDec(netEnc(data)), x_min, x_max)
-    output = denormalise(netG(netEnc(data)), x_min, x_max)
-    output = np.array(output.squeeze().cpu().detach())
-    create_tracer_VTU(i_batch, output, "GANVF")
->>>>>>> 6e74aa15ea4a419d09b9d07b55b89e6b244ef52a
     print(i_batch)
     #print(np.array(output.squeeze().cpu().detach()))
     # print(denormalise(netG(netEnc(data)), x_min, x_max))

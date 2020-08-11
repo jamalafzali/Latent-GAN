@@ -44,7 +44,7 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*32) x 1
 
-            nn.Conv1d(ndf * 32, 1, 2, 1, 0, bias=False),
+            nn.Conv1d(ndf * 32, 1, 4, 1, 0, bias=False),
             #nn.Sigmoid()
 
         )

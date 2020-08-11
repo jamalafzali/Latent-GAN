@@ -1,53 +1,31 @@
 #from __future__ import print_function, division
 #%matplotlib inline
-#import argparse
 import os
 import random
 import torch
 import torch.nn as nn
-#import torch.nn.parallel
-#import torch.backends.cudnn as cudnn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-#import torchvision.datasets as dset
-#import torchvision.transforms as transforms
-#import torchvision.utils as vutils
 import numpy as np
 import matplotlib.pyplot as plt
-#import matplotlib.animation as animation
-#from IPython.display import HTML
-
-#import pandas as pd
-#from skimage import io, transform
-
 from torchvision import transforms, utils
-
 from AutoEncoder import Encoder, Decoder
 from Variables import *
 from Dataset import *
 from getData import get_tracer
 from Norm import *
 from nadam import Nadam
-
-#torch.set_default_dtype(torch.float64)
+import csv
 
 #########################
 # Instantiating Dataset #
 #########################
 tracer_dataset = TracerDataset(transform = ToTensor())
 
-# # Creating list of batches alongside an increment of this (for piece-wise error calculations)
-# batch_indicies = list(BatchSampler(RandomSampler(range(time_steps)), batch_size=batch_size, drop_last=True)) #Should include workers?
-# batch_indicies_incr = [[i + 1 for i in item] for item in batch_indicies]
-
-# dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
-# dataloader_incr = DataLoader(tracer_dataset, batch_sampler=batch_indicies_incr, num_workers=2)
-
 # Decide whihch device we want to run on
 if torch.cuda.is_available():
     print("CUDA is available!")
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
-
 
 #########################
 # Weight Initialisation #
@@ -59,7 +37,6 @@ def weights_init(m):
     elif classname.find('BatchNorm') != -1:
         nn.init.normal_(m.weight.data, 1.0, 0.02)
         nn.init.constant_(m.bias.data, 0)
-
 
 #############################
 # Instantiating AutoEncoder #
@@ -101,12 +78,12 @@ epoch_list = []
 loss_list = []
 val_loss_list = []
 
-# Splitting data between train and validation sets
-ints = list(range(time_steps))
-random.shuffle(ints)
-int_to_split = int(val_percent * time_steps)
-train_ints = ints[int_to_split:]
-val_ints = ints[:int_to_split]
+# # Splitting data between train and validation sets
+# ints = list(range(time_steps))
+# random.shuffle(ints)
+# int_to_split = int(val_percent * time_steps)
+# train_ints = ints[int_to_split:]
+# val_ints = ints[:int_to_split]
 
 
 for epoch in range(num_epochs_AE):
@@ -114,7 +91,6 @@ for epoch in range(num_epochs_AE):
     batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
     dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
 
-   
     for i_batch, sample_batched in enumerate(dataloader):
         data = sample_batched.to(device=device, dtype=torch.float)
 
@@ -150,7 +126,6 @@ for epoch in range(num_epochs_AE):
         output = netDec(output.detach()).detach()
         errAE_Val += mse_loss(output, data)
         
-
     #print("The length of val set is ", len(val_dataloader))
     errAE_Val /= len(val_dataloader)
 
@@ -160,6 +135,14 @@ for epoch in range(num_epochs_AE):
     val_loss_list.append(errAE_Val.item())
     print("Validation Loss:", errAE_Val.item())
 
+# Save graph outputs
+newfilePath = '/vol/bitbucket/ja819/Python Files/Latent-GAN/AE-GAN/GANgraphs/AE512.csv'
+rows = zip(epoch_list, loss_list, val_loss_list)
+with open(newfilePath, "w") as f:
+    writer = csv.writer(f)
+    for row in rows:
+        writer.writerow(row)
+
 plt.plot(epoch_list, loss_list, label="Test Loss")
 plt.plot(epoch_list, val_loss_list, label="Validation Loss")
 plt.xlabel('Epochs')
@@ -167,20 +150,11 @@ plt.ylabel('AE Loss')
 plt.legend()
 plt.show()
 
-# plt.plot(epoch_list, g_loss_list, label="Generator")
-# plt.plot(epoch_list, d_loss_list, label="Discriminator")
-# plt.plot(epoch_list, bce_loss_list, label="G_BCE Loss")
-# plt.plot(epoch_list, mse_loss_list, label="G_MSE Loss")
-# plt.xlabel('Epochs')
-# plt.ylabel('Loss')
-# plt.legend()
-# plt.show()
-
 print("Training complete. Saving model...")
-# torch.save({
-#             'netEnc_state_dict': netEnc.state_dict(), 
-#             'netDec_state_dict': netDec.state_dict(), 
-#             'optimizerEnc_state_dict': optimizerEnc.state_dict(),
-#             'optimizerDec_state_dict': optimizerDec.state_dict() },
-#             "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AutoEncoder128")
-# print("Model has saved successfully!")
+torch.save({
+            'netEnc_state_dict': netEnc.state_dict(), 
+            'netDec_state_dict': netDec.state_dict(), 
+            'optimizerEnc_state_dict': optimizerEnc.state_dict(),
+            'optimizerDec_state_dict': optimizerDec.state_dict() },
+            "/vol/bitbucket/ja819/Python Files/Latent-GAN/Main Files/Saved models/AE512")
+print("Model has saved successfully!")

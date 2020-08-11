@@ -2,15 +2,16 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.sampler import BatchSampler, RandomSampler
 from Variables import *
-from getData import get_velocity_field, get_velocity_field_from_latent
+from getData import get_velocity_field, get_velocity_field_from_latent, get_velocity_field_structured
+from convertToStructuredMesh import get_structured_velocity
 
 ########################
 # Creating the dataset #
 ########################
 # https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
 
-class TracerDataset(Dataset):
-    """Tracer Dataset"""
+class VelocityFieldDataset(Dataset):
+    """Velocity Field Dataset"""
 
     def __init__(self, file_number='', root_dir='', transform=None):
         """
@@ -33,8 +34,9 @@ class TracerDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         
-        sample = get_velocity_field(idx)
-        #sample = get_tracer_from_latent(idx)
+        sample = get_velocity_field_structured(idx)
+        #sample = get_velocity_field(idx)
+        #sample = get_VelocityField_from_latent(idx)
         if self.transform:
             sample = self.transform(sample)
 
@@ -53,8 +55,8 @@ class ToTensor(object):
         sample = torch.from_numpy(sample)
         return sample
 
-class TracerLatentDataset(Dataset):
-    """Tracer Dataset"""
+class VelocityFieldLatentDataset(Dataset):
+    """Velocity Field Dataset"""
 
     def __init__(self, file_number='', root_dir='', transform=None):
         """
@@ -77,10 +79,38 @@ class TracerLatentDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         
-        #sample = get_tracer(idx)
-        sample = get_velocity_field_from_latent(idx)
+                sample = get_velocity_field_from_latent(idx)
         if self.transform:
             sample = self.transform(sample)
 
         return sample
 
+class VelocityFieldDatasetStructured(Dataset):
+    """Velocity Field Structured Dataset"""
+
+    def __init__(self, file_number='', root_dir='', transform=None):
+        """
+        Initialise the Dataset
+        :fileNumber: int or string
+            Used to specify which file to open
+        : rootDir: string
+            Directory of all vtu files
+        :transform: callable, optional
+            Optional transform to be applied on a sample
+        """
+        self.root_dir = root_dir
+        self.transform = transform
+        self.length = time_steps # number of timesteps available
+
+    def __len__(self):
+        return self.length
+    
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+        
+        sample = get_structured_velocity(idx)
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample

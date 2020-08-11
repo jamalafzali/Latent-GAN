@@ -1,28 +1,5 @@
-#from datafile import output
 import sys
 import vtktools
-
-#contador = 0
-#handicap = 60
-
-#for i in range(1501):
-# directory_model = '/vol/bitbucket/ja819/Python Files/Latent-GAN/AE-GAN/'
-
-# # folderPath = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU'
-# # filePath = folderPath + '/LSBU_' + str(fileNumber) + '.vtu'
-
-# ug = vtktools.vtu('/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU/LSBU_83.vtu')
-# #ug = vtktools.vtu(directory_model + 'Velocity2d_' + str(i)+'.vtu')
-
-# #ug.AddScalarField('PredictionAE', rom[i, :])
-# ug.AddScalarField('PredictionAE', output)
-
-# #ug.RemoveField('ROM')
-#  #ug.AddField('ROM', rom[contador + handicap, :])
-# ug.Write(directory_model + 'test.vtu')
-
-# #contador += 1
-# #print(contador)
 
 def create_velocity_field_VTU(fileNumber, prediction, networkName):
     """
@@ -41,12 +18,9 @@ def create_velocity_field_VTU(fileNumber, prediction, networkName):
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
     
-<<<<<<< HEAD
     ug.AddVectorField('Prediction' + networkName, prediction)
     
-=======
-    #saveFolderPath = '/vol/bitbucket/ja819/Fluids Dataset/LatentSpaceVF'
->>>>>>> 6e74aa15ea4a419d09b9d07b55b89e6b244ef52a
+    #saveFolderPath = '/vol/bitbucket/ja819/Fluids Dataset/predictions'
     saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/predictions'
     saveFilePath = saveFolderPath + networkName + '/' + networkName + '_' + str(fileNumber) + '.vtu'
 
