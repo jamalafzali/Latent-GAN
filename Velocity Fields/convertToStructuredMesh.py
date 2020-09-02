@@ -11,12 +11,12 @@ import numpy as np
 import sys
 import vtktools
 import pyvista as pv
-from Variables import file
+from Variables import defaultFilePath
 
 def get_structured_velocity(fileNumber):
     sys.path.append('fluidity-master')
 
-    fileName = 'E:/MSc Individual Project/Fluids Dataset/small3DLSBU/LSBU_' + str(fileNumber) + '.vtu'
+    fileName = defaultFilePath + '/small3DLSBU/LSBU_' + str(fileNumber) + '.vtu'
     mesh = pv.read(fileName)
 
     size = 64
@@ -31,13 +31,11 @@ def get_structured_velocity(fileNumber):
     p = p.transpose()
     return p
 
-p = get_structured_velocity(500)
-print(p.shape)
 
 def convert_to_structured(data):
     sys.path.append('fluidity-master')
 
-    fileName = 'E:/MSc Individual Project/Fluids Dataset/small3DLSBU/LSBU_0.vtu'
+    fileName = defaultFilePath + '/small3DLSBU/LSBU_0.vtu'
     mesh = pv.read(fileName)
 
     size = 64
@@ -61,7 +59,7 @@ def convert_to_structured(data):
 # #######################################
 # # Convert existing data to Structured #
 # #######################################
-# for fileNumber in range(988,989):
+# for fileNumber in range(989):
 
 #     sys.path.append('fluidity-master')
 #     fileName = '/vol/bitbucket/ja819/Fluids Dataset/small3DLSBU/LSBU_' + str(fileNumber) + '.vtu'
