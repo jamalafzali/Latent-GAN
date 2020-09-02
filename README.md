@@ -6,9 +6,10 @@ To test the models, find the _predictAllAE.py_ or _predictAllGAN.py_ files in th
 ## Breakdown of files
 
 **mainAE.py**
-* Main file used for AutoEncoder training.
+* Main file used for AutoEncoder training. See the respective files for Tracer / Velocity Field.
 
 **mainGAN.py**
+* Main file used for GAN training. See the respective files for Tracer / Velocity Field.
 
 **getData.py** 
 * _get_tracer_: retrieves a tracer array from a _.vtu_ file
