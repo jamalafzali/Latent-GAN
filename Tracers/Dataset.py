@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.sampler import BatchSampler, RandomSampler
 from Variables import *
-from getData import get_tracer, get_tracer_from_latent
+from getData import get_tracer#, get_tracer_from_latent
 
 ########################
 # Creating the dataset #

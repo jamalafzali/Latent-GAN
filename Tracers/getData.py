@@ -7,7 +7,8 @@ from Norm import normalise, denormalise
 
 def get_tracer(fileNumber):
     """
-    Used to get the Tracers as a numpy array corresponding to a vtu file from the Fluids dataset 
+    Used to get the Tracers as a numpy array corresponding to a vtu file from the Fluids dataset.
+    Note this normalises the returned array.
     :param fileNumber: int or string
         Used to identify which vtu file to return
         Values are between 0 and 988
@@ -30,21 +31,22 @@ def get_tracer(fileNumber):
 
 def get_prediction_tracer(fileNumber):
     """
-    Used to get the Tracers as a numpy array corresponding to a vtu file from the Fluids dataset 
+    Used to get the Tracers as a numpy array corresponding to a vtu file from the Fluids dataset .
+    Note this normalises the returned array.
     :param fileNumber: int or string
         Used to identify which vtu file to return
         Values are between 0 and 988
     :return: numpy array
         Tracers are returned as numpy array
     """
-    networkName = 'prediction' # Change this to prediction folder name
+    networkName = 'tDA2' # Change this to prediction folder name
 
     folderPath = defaultFilePath + '/' + networkName
     filePath = folderPath + '/' + networkName + '_' + str(fileNumber) + '.vtu' 
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
     ug.GetFieldNames()
-    p = ug.GetScalarField('AEGAN')
+    p = ug.GetScalarField('Latent-GAN')
     p = np.array(p)
 
     # Normalise p

@@ -1,4 +1,4 @@
-###### Nadam Algorithm ######
+###### VTKTOOLS ######
 ## author: angus-g
 ## library: FluidityProject
 ## year: 2019

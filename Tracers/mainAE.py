@@ -65,7 +65,7 @@ netDec.apply(weights_init)
 mse_loss = nn.MSELoss()
 
 # Setup Adam optimizers
-optimizerEnc = optim.Adam(netEnc.parameters(), lr=lr, betas=(beta1, 0.999)) # Nadam optim?
+optimizerEnc = optim.Adam(netEnc.parameters(), lr=lr, betas=(beta1, 0.999)) 
 optimizerDec = optim.Adam(netDec.parameters(), lr=lr, betas=(beta1, 0.999))
 
 ############
@@ -78,8 +78,8 @@ val_loss_list = []
 
 for epoch in range(num_epochs_AE):
     # Getting batches for Training set
-    batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
-    dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
+    batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) 
+    dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) 
 
     for i_batch, sample_batched in enumerate(dataloader):
         data = sample_batched.to(device=device, dtype=torch.float)
@@ -106,7 +106,7 @@ for epoch in range(num_epochs_AE):
     errAE_Val = 0
     for i in val_ints:
         val_tracer = get_tracer(i)
-        val_tracer = torch.from_numpy(val_tracer).unsqueeze(0).to(device=device, dtype=torch.float)
+        val_tracer = torch.from_numpy(val_tracer).unsqueeze(1).to(device=device, dtype=torch.float)
 
         # Pass through Encoder 
         val_output = netEnc(val_tracer).detach()

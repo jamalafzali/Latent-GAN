@@ -51,7 +51,7 @@ def create_tracer_VTU_GAN(fileNumber, prediction, networkName):
     ug.AddScalarField('Latent-GAN', prediction)
 
     saveFolderPath = defaultFilePath + '/' + networkName
-    saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/tLatentGANExtrap'
+    saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/tDA2'
     saveFilePath = saveFolderPath + '/' + networkName + '_' + str(fileNumber) + '.vtu'
 
     ug.Write(saveFilePath)

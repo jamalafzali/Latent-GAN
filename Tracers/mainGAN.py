@@ -100,9 +100,9 @@ val_loss_list = []
 
 for epoch in range(num_epochs_GAN):
     # Getting batches for Training set
-    batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
+    batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True))
     batch_indicies_incr = [[i + 1 for i in item] for item in batch_indicies]
-    dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
+    dataloader = DataLoader(tracer_dataset, batch_sampler=batch_indicies, num_workers=2)
     dataloader_incr = DataLoader(tracer_dataset, batch_sampler=batch_indicies_incr, num_workers=2)
 
     for i_batch, (sample_batched, sample_batched_incr) in enumerate(zip(dataloader, dataloader_incr)):

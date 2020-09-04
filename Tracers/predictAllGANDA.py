@@ -40,7 +40,7 @@ netG.load_state_dict(checkpoint['netG_state_dict'])
 
 
 # Number of prediction tracers that will be used an inputs before using real data
-numOfPreds = 1
+numOfPreds = 2
 
 i = 988
 # Take real 988 and output the prediction to 989
@@ -49,8 +49,17 @@ data = torch.from_numpy(data).unsqueeze(1).to(device=device, dtype=torch.float)
 output = netEnc(data)
 output = denormalise(netG(output), x_min, x_max)
 output = np.array(output.squeeze().cpu().detach())
-create_tracer_VTU_GAN(i, output, "tDA")
+create_tracer_VTU_GAN(i, output, "tDA2")
 i += 1
+
+for _ in range(numOfPreds-1):
+    pred = get_prediction_tracer(i-1)
+    pred = torch.from_numpy(pred).unsqueeze(1).to(device=device, dtype=torch.float)
+    output = netEnc(pred)
+    output = denormalise(netG(output), x_min, x_max)
+    output = np.array(output.squeeze().cpu().detach())
+    create_tracer_VTU_GAN(i, output, "tDA2")
+    i += 1
 
 # Values for weighted average
 a = 0.1 # Weight for prediction 0.1
@@ -72,7 +81,7 @@ while i < 3729:
     # Perform weighted average
     assim = (a*output + b*real) / (a+b) # Probably better ways to do this
 
-    create_tracer_VTU_GAN(i, assim, "tDA")
+    create_tracer_VTU_GAN(i, assim, "tDA2")
     i += 1
 
     # Take the prediction and output another prediction
@@ -82,6 +91,6 @@ while i < 3729:
         output = netEnc(pred)
         output = denormalise(netG(output), x_min, x_max)
         output = np.array(output.squeeze().cpu().detach())
-        create_tracer_VTU_GAN(i, output, "tDA")
+        create_tracer_VTU_GAN(i, output, "tDA2")
         i += 1
 
