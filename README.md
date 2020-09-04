@@ -33,7 +33,7 @@ To test the models, find the _predictAllAE.py_ or _predictAllGAN.py_ files in th
 
 **createVTU.py**
 * _create_tracer_VTU_AE_:_ Creates a _.vtu_ file adding the AE reconstruction as a data array.
-* _create_tracer_VTU_GAN:_ Same as above. The name of the created file represents the input timestep _t_. The prediction data array represents _t+1_ and the tracer represents the ground truth at _t+1_.
+* _create_tracer_VTU_GAN:_ Same as above. The name of the created file represents the input timestep _t_. The prediction data array represents the prediction at _t+1_ and the tracer represents the ground truth at _t+1_.
 * _create_velocity_field_VTU_AE_: Same as above, but for Velocity Fields.
 * _create_velocity_field_VTU_GAN_: Same as above, but for Velocity Fields.
 
