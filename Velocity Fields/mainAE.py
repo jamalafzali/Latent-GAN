@@ -75,8 +75,8 @@ val_loss_list = []
 
 for epoch in range(num_epochs_AE):
     # Getting batches for Training set
-    batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) #Should include workers?
-    dataloader = DataLoader(velocity_dataset, batch_sampler=batch_indicies, num_workers=2) # Should add workers
+    batch_indicies = list(BatchSampler(RandomSampler(train_ints), batch_size=batch_size, drop_last=True)) 
+    dataloader = DataLoader(velocity_dataset, batch_sampler=batch_indicies, num_workers=2) 
 
     for i_batch, sample_batched in enumerate(dataloader):
         data = sample_batched.to(device=device, dtype=torch.float)

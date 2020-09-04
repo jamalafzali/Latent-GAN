@@ -9,7 +9,7 @@ import pyvista as pv
 def get_velocity_field(fileNumber):
     """
     Used to get the Velocity Field as a numpy array corresponding to a vtu file 
-    from the Fluids dataset 
+    from the Fluids dataset. Note this normalises the returned array.
     :param fileNumber: int or string
         Used to identify which vtu file to return
         Values are between 0 and 988
@@ -34,7 +34,8 @@ def get_velocity_field(fileNumber):
 
 def get_velocity_field_structured(fileNumber):
     """
-    Used to get the Velocity Field as a numpy array corresponding to a vtu file from the Fluids dataset 
+    Used to get the Velocity Field as a numpy array corresponding to a vtu file from the Fluids dataset.
+    Note this normalises the returned array. 
     :param fileNumber: int or string
         Used to identify which vtu file to return
         Values are between 0 and 988
@@ -43,8 +44,10 @@ def get_velocity_field_structured(fileNumber):
     """
     folderPath = defaultFilePath + '/small3DLSBU'
     filePath = folderPath + '/LSBU_' + str(fileNumber) + '.vtu'
-    sys.path.append('fluidity-master')    mesh = pv.read(filePath)
+    sys.path.append('fluidity-master')    
+    mesh = pv.read(filePath)
     p = mesh.point_arrays['Velocity']
+    
 
     # Normalise p
     p = normalise(p, x_min, x_max)
@@ -63,18 +66,19 @@ def get_prediction_velocity(fileNumber):
     :return: numpy array
         Tracers are returned as numpy array
     """
-    networkName = 'prediction' # Change this to prediction folder name
+    networkName = 'vDA' # Change this to prediction folder name
 
     folderPath = defaultFilePath + '/' + networkName
     filePath = folderPath + '/' + networkName + '_' + str(fileNumber) + '.vtu' 
     sys.path.append('fluidity-master')
     ug = vtktools.vtu(filePath)
     ug.GetFieldNames()
-    p = ug.GetScalarField('PredictionGAN')
+    p = ug.GetVectorField('Latent-GAN')
     p = np.array(p)
 
     # Normalise p
     p = normalise(p, x_min, x_max)
     # Convert p into 3 x N array
-    p = np.array([p[:]])
+    #p = np.array([p[:]])
+    p = p.transpose()
     return p

@@ -51,7 +51,7 @@ def create_velocity_field_VTU_GAN(fileNumber, prediction, networkName):
     ug.AddVectorField('Latent-GAN', prediction)
 
     saveFolderPath = defaultFilePath + '/' + networkName
-    saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset/tLatentGANExtrap'
+    saveFolderPath = 'E:/MSc Individual Project/Fluids Dataset'
     saveFilePath = saveFolderPath + '/' + networkName + '_' + str(fileNumber) + '.vtu'
 
     ug.Write(saveFilePath)

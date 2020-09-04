@@ -40,7 +40,7 @@ netEnc.load_state_dict(checkpoint['netEnc_state_dict'])
 optimizerEnc.load_state_dict(checkpoint['optimizerEnc_state_dict'])
 #optimizerDec.load_state_dict(checkpoint['optimizerDec_state_dict'])
 
-checkpoint = torch.load("E:/MSc Individual Project/Models/Experiments/vGANFinal_200")
+checkpoint = torch.load("E:/MSc Individual Project/Models/Experiments/vGANFinal")
 netG.load_state_dict(checkpoint['netG_state_dict'])
 #netD.load_state_dict(checkpoint['netD_state_dict'])
 optimizerG.load_state_dict(checkpoint['optimizerG_state_dict'])
@@ -53,18 +53,17 @@ optimizerG.load_state_dict(checkpoint['optimizerG_state_dict'])
 
 mse_loss = nn.MSELoss()
 
-tracer_dataset = VelocityFieldDataset(transform = ToTensor())
+# batch_indicies = []
+# for i in range(900, 989):
+#     batch_indicies.append(i)
 
-
-batch_indicies = []
-for i in range(900, 989):
-    batch_indicies.append(i)
+batch_indicies = [980]
 
 for i in batch_indicies:
     data = get_velocity_field(i)
     data = torch.from_numpy(data).unsqueeze(0).to(device=device, dtype=torch.float)
     output = denormalise(netG(netEnc(data)), x_min, x_max)
     output = np.array(output.squeeze().cpu().detach()).transpose()
-    print(output.shape)
-    create_velocity_field_VTU_GAN(i, output, "vGANFinal_200")
+    #print(output.shape)
+    create_velocity_field_VTU_GAN(i, output, "vExtra2")
     print(i)

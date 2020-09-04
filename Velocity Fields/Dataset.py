@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.sampler import BatchSampler, RandomSampler
 from Variables import *
-from getData import get_velocity_field, get_velocity_field_from_latent, get_velocity_field_structured
+from getData import get_velocity_field, get_velocity_field_structured
 from convertToStructuredMesh import get_structured_velocity
 
 ########################
