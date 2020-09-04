@@ -3,6 +3,8 @@ The files are split into Tracers and Velocity Fields above. Each folder contains
 
 To test the models, find the _predictAllAE.py_ or _predictAllGAN.py_ files in the respective models folder (Note: You will need to update the folder location to match your own data).
 
+Trained models can be downloaded from: https://drive.google.com/file/d/1N8mvZOXjRzhjv0g9R62Ku5TvGfxAY7zt/view?usp=sharing
+
 ## Breakdown of files
 
 **mainAE.py**
