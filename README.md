@@ -1,7 +1,7 @@
 # Latent-GAN
 The files are split into Tracers and Velocity Fields above. Each folder contains the finalised models trained as part of this study.
 
-To test the models, find the _predictAllAE.py_ or _predictAllGAN.py_ files in the respective models folder (Note: You will neeed to update the folder location to match your own data).
+To test the models, find the _predictAllAE.py_ or _predictAllGAN.py_ files in the respective models folder (Note: You will need to update the folder location to match your own data).
 
 ## Breakdown of files
 
