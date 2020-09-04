@@ -11,7 +11,7 @@ To test the models, find the _predictAllAE.py_ or _predictAllGAN.py_ files in th
 **mainGAN.py**
 * Main file used for GAN training. See the respective files for Tracer / Velocity Field.
 
-**getData.py** 
+**getData.py** - Note that all data arrays are returned normalised
 * _get_tracer_: retrieves a tracer array from a _.vtu_ file
 * _get_tracer_from_latent_: retrieves a tracer array from the latent space representation from a _.csv_ file
 * _get_prediction_tracer_: retrieves a predicted tracer array from a _.vtu_ file
