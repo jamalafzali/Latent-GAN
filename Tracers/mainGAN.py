@@ -58,13 +58,13 @@ print(netG)
 
 # Handle multi-gpu if required
 if (device.type == 'cuda') and (ngpu > 1):
-    netE = nn.DataParallel(netE, list(range(ngpu)))
+    netEnc = nn.DataParallel(netEnc, list(range(ngpu)))
     netD = nn.DataParallel(netD, list(range(ngpu)))
     netG = nn.DataParallel(netG, list(range(ngpu)))
 
 # Apply the weights initialiser function to randomly initalise all weights
 # to mean=0 and sd=0.2
-netE.apply(weights_init)
+netEnc.apply(weights_init)
 netD.apply(weights_init)
 netG.apply(weights_init)
 
