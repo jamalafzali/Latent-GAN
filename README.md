@@ -25,6 +25,8 @@ Trained models can be downloaded from: https://drive.google.com/file/d/1N8mvZOXj
 * _TracerDataset_: Custom implementation of the Dataset Class from PyTorch. Dataset uses _get_tracer_ above. 
 * _ToTensor_: Used to convert ndarrays to tensors
 * _TracerLatentDataset_: Custom implementation of the Dataset Class from PyTorch. Dataset uses _get_prediction_tracer_ above. 
+* _VelocityFieldDataset_: Custom implementation of the Dataset Class from PyTorch. Dataset uses _get_velocity_ above. 
+* _VelocityFieldDatasetStructured_: Custom implementation of the Dataset Class from PyTorch. Dataset uses _get_structured_velocity_ below. 
 
 **Norm.py**
 * _normalise_: Given an array/tensor along with its max and min value, normalises the array from between 0 and 1
